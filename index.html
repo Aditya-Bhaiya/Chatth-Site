@@ -1,14 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chhath Puja | Offline Bhajans</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:linear-gradient(180deg,#ffd9a0,#ffb870,#ff9a40); }
+        .warning-popup { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(45deg,#ff9900,#ff5e00); display:flex; justify-content:center; align-items:center; color:#fff; z-index:1000; animation:fadeIn 1s; }
+        .warning-box { background:#fff; color:#222; padding:25px; border-radius:15px; width:90%; max-width:450px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); animation:pop 0.6s; }
+        button { box-shadow:0 0 12px rgba(255,94,0,0.6); transition:0.3s; padding:12px 25px; margin:10px; border:none; border-radius:30px; cursor:pointer; font-weight:bold; font-size:16px; }
+        .allow-btn { background:#ff5e00; color:#fff; }
+        .deny-btn { background:#333; color:#fff; }
+        .cards { display:none; padding:20px; text-align:center; }
+        .card { background:#fff; padding:20px; margin:10px auto; width:80%; border-radius:15px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.2); transition:0.3s; font-size:18px; font-weight:bold; }
+        .card:hover { transform:scale(1.05); background:#ffecd1; }
+        #downloadProgress { display:none; background:#fff; padding:10px; margin:15px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
+        #downloadProgress .bar { height:10px; background:#ff5e00; border-radius:10px; width:0%; transition:0.3s; }
+        #downloadProgress .percent { font-weight:bold; color:#ff5e00; }
+        #songList li { list-style:none; }
+        @keyframes pop { 0%{transform:scale(0.5);} 100%{transform:scale(1);} }
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+        @keyframes beat {0%{height:6px}50%{height:22px}100%{height:6px}}
+        .equalizer { display:flex;align-items:flex-end;gap:3px;margin-left:10px; }
+        .equalizer span { width:4px;height:8px;background:#ff5e00;animation:beat 0.8s infinite ease-in-out; }
+    </style>
 </head>
 <body>
-    
+<header style="text-align:center;padding:15px;background:linear-gradient(45deg,#ff8a00,#ff5e00);color:white;font-size:26px;font-weight:bold;letter-spacing:1px;text-shadow:2px 2px 4px rgba(0,0,0,0.4);box-shadow:0 4px 12px rgba(0,0,0,0.3);">🌞 जय छठी मईया 🌞</header>
+<div class="warning-popup" id="warningPopup"><div class="warning-box"><p>अगर आप इस साइट पर पहली बार आ रहे हैं तो ध्यान दें: यह साइट पहली बार लोड होने पर लगभग <b>67MB डेटा</b> लेगी। लेकिन एक बार Allow करने के बाद आप <b>जीवनभर बिना इंटरनेट</b> के छठ भजन सुन सकते हैं।</p><p>क्या आप Allow करना चाहते हैं?</p><button class="allow-btn" onclick="allowSite()">Allow</button><button class="deny-btn" onclick="denySite()">Deny</button></div></div>
+<div class="cards" id="mainCards"><div class="card" onclick="openSongs()">🎵 Chhath Bhajans</div><div class="card">📜 Chhath Story</div></div>
+<div id="songsSection" style="display:none; padding:24px;"><h2 style="color:#fff; text-align:center;">Chhath Bhajans</h2><div id="downloadProgress"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div class="text">Preparing download...</div><div class="percent">0%</div></div><div style="background:#eee;padding:6px;border-radius:10px;"><div class="bar"></div></div></div><ul id="songList" style="padding:0; max-width:980px; margin:0 auto;"></ul><div id="comingSoon" style="max-width:980px;margin:16px auto;"><div class="song-card locked" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:#111;color:#9a9a9a;"><div><div style="font-weight:700;">More Bhajans Coming Soon</div><div style="font-size:13px;">Locked — Updates will be available soon</div></div><div>🔒</div></div></div></div>
+<div id="audioPlayer" style="display:none;position:fixed;bottom:0;left:0;width:100%;background:#ff7b00;color:white;padding:10px;box-shadow:0 -2px 10px rgba(0,0,0,0.4);"><div id="currentSong">No song playing</div><audio id="player" controls style="width:100%;"></audio><div style="display:flex;justify-content:center;margin-top:5px;gap:10px;"><button onclick="prevSong()">⏮️ Prev</button><button onclick="nextSong()">⏭️ Next</button></div></div>
+<script>
+let songs = ['CHHATHI MAAI AAILI NAIHARVA.mp3','Ho Deenanath.mp3','Pahile Pahil Chhathi Maiya.mp3','Uga Hai Suraj Dev.mp3','आदित मनाईला.mp3','काँच ही बाँस के बहंगिया.mp3','छठी माई के घाटवा पे आजन बाजन.mp3','नदिया के पनिया.mp3','पटना के घाट.mp3','पिया जोड़ा कोशी भरवाऐ के.mp3','महिमा छठी मैयय के अपार.mp3','हे छठी मइया.mp3'];
+const CACHE_NAME='chhath-songs-v1'; let currentIndex=0; let player=null;
+function allowSite(){document.getElementById('warningPopup').style.display='none';document.getElementById('mainCards').style.display='block';autoDownloadSongs();}
+function denySite(){document.getElementById('warningPopup').style.display='none';document.getElementById('mainCards').style.display='block';}
+function openSongs(){document.getElementById('mainCards').style.display='none';document.getElementById('songsSection').style.display='block';}
+window.onload=function(){player=document.getElementById('player');renderSongs();}
+function renderSongs(){const list=document.getElementById('songList');songs.forEach((s,i)=>{const li=document.createElement('li');li.style.background='#222';li.style.color='white';li.style.padding='12px';li.style.margin='8px 0';li.style.borderRadius='8px';li.innerHTML=`${s}<button onclick="playSong(${i})">▶</button>`;list.appendChild(li);});}
+async function autoDownloadSongs(){const dp=document.getElementById('downloadProgress');dp.style.display='block';const cache=await caches.open(CACHE_NAME);for(let i=0;i<songs.length;i++){await cache.add(songs[i]);let p=Math.round(((i+1)/songs.length)*100);dp.querySelector('.bar').style.width=p+'%';dp.querySelector('.percent').innerText=p+'%';}dp.style.display='none';}
+function playSong(i){currentIndex=i;player.src=songs[currentIndex];player.play();document.getElementById('audioPlayer').style.display='block';document.getElementById('currentSong').innerText=songs[currentIndex];}
+function nextSong(){currentIndex=(currentIndex+1)%songs.length;playSong(currentIndex);}function prevSong(){currentIndex=(currentIndex-1+songs.length)%songs.length;playSong(currentIndex);}
+</script>
 </body>
 </html>
