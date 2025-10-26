@@ -20,46 +20,23 @@ const OFFLINE_URLS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(OFFLINE_URLS).catch(err=>{
-        // swallow errors for individual entries but continue install
-        console.warn('Some resources failed to cache on install:', err);
-      }))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => cache.addAll(OFFLINE_URLS)).then(self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    )).then(() => self.clients.claim())
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim())
   );
 });
 
-// Cache-first strategy for same-origin GET requests
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  // Only handle same-origin requests to avoid CORS issues
-  const reqUrl = new URL(event.request.url);
-  if (reqUrl.origin !== self.location.origin) return;
-
   event.respondWith(
-    caches.match(event.request).then(cachedResp => {
-      if (cachedResp) return cachedResp;
-      return fetch(event.request).then(networkResp => {
-        // cache a copy for future offline use (but only if ok)
-        if (networkResp && networkResp.status === 200) {
-          const copy = networkResp.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-        }
-        return networkResp;
-      }).catch(() => {
-        // fallback to index.html for navigation, or just fail for media
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
-    })
+    caches.match(event.request).then(cached => cached || fetch(event.request).then(res => {
+      const resClone = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
+      return res;
+    }))
   );
 });
