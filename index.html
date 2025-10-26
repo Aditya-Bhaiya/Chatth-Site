@@ -5,83 +5,42 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jai Chhathi Maiya — Chhath Bhajans (Offline)</title>
 
-  <!-- PWA manifest + theme -->
+  <!-- PWA manifest -->
   <link rel="manifest" href="/Chatth-Site/manifest.json" />
   <meta name="theme-color" content="#d4a017" />
 
   <style>
-    /* Premium Golden + Chhath Ghat Vibe */
     :root{
-      --gold1:#f7d774;
-      --gold2:#d4a017;
-      --accent:#ff7b00;
-      --text:#2b1700;
-      --card-bg:linear-gradient(180deg,#14110e,#0b0b0b);
+      --gold1:#f7d774; --gold2:#d4a017; --accent:#ff7b00; --text:#2b1700;
     }
     html,body{height:100%;margin:0;font-family:Inter, Poppins, system-ui, sans-serif;background:linear-gradient(180deg,#fff7ea,#ffe5b8 30%,#ffd08a);color:var(--text);}
-    header{
-      background:linear-gradient(90deg,var(--gold2),#ffb84d);
-      color:#fff;padding:20px;text-align:center;font-size:28px;font-weight:800;
-      box-shadow:0 6px 22px rgba(0,0,0,0.18);
-      letter-spacing:1px;
-    }
+    header{background:linear-gradient(90deg,var(--gold2),#ffb84d);color:#fff;padding:20px;text-align:center;font-size:28px;font-weight:800;box-shadow:0 6px 22px rgba(0,0,0,0.18);letter-spacing:1px;}
     .subtitle{font-size:14px;color:rgba(255,255,255,0.95);margin-top:6px}
-
     .container{max-width:1050px;margin:18px auto;padding:12px;}
-    .hero{
-      display:flex;gap:16px;align-items:center;justify-content:space-between;
-      background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,250,230,0.9));
-      padding:18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.06);
-    }
-    .hero-left{display:flex;gap:12px;align-items:center}
+    .hero{display:flex;gap:16px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,250,230,0.9));padding:18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.06);}
     .badge{background:var(--gold1);color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;box-shadow:0 6px 18px rgba(212,160,23,0.12)}
-    .hero-title{font-size:20px;font-weight:800}
     .cta{background:var(--accent);color:white;padding:10px 16px;border-radius:12px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(255,123,0,0.18)}
-
-    /* Warning popup - full screen */
-    .warning-popup{position:fixed;inset:0;background:linear-gradient(135deg,rgba(212,160,23,0.95),rgba(255,123,0,0.94));display:flex;align-items:center;justify-content:center;z-index:2000}
-    .warning-box{background:#fff;padding:22px;border-radius:14px;max-width:460px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,0.35)}
-    .warning-box p{color:#222;margin:8px 0}
-
-    /* Song list */
-    #songList{margin:16px 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-    .song-card{
-      background:linear-gradient(180deg,#111,#060606);
-      color:#eaeaea;padding:14px;border-radius:12px;box-shadow:0 6px 26px rgba(0,0,0,0.5);display:flex;justify-content:space-between;align-items:center;gap:12px;
-      transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
-    }
-    .song-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 22px 48px rgba(212,160,23,0.12)}
-    .song-meta{display:flex;flex-direction:column}
-    .song-title{font-weight:700;color:#fff;font-size:15px}
-    .song-sub{color:#b6b6b6;font-size:13px;margin-top:6px}
-    .play-btn{
-      background:var(--accent);border:none;padding:10px 14px;border-radius:28px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 10px 26px rgba(255,123,0,0.14)
-    }
-
-    /* download progress */
     #downloadProgress{display:none;margin:12px 0;background:rgba(255,255,255,0.95);padding:10px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.08)}
     .barWrap{background:#eee;border-radius:10px;padding:6px}
     .bar{height:10px;width:0%;background:var(--accent);border-radius:10px;transition:width .25s}
-
-    /* audio player sticky bottom */
+    #songList{margin:16px 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+    .song-card{background:linear-gradient(180deg,#111,#060606);color:#eaeaea;padding:14px;border-radius:12px;box-shadow:0 6px 26px rgba(0,0,0,0.5);display:flex;justify-content:space-between;align-items:center;gap:12px;transition:transform .28s, box-shadow .28s}
+    .song-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 22px 48px rgba(212,160,23,0.12)}
+    .song-title{font-weight:700;color:#fff;font-size:15px}
+    .song-sub{color:#b6b6b6;font-size:13px;margin-top:6px}
+    .play-btn{background:var(--accent);border:none;padding:10px 14px;border-radius:28px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 10px 26px rgba(255,123,0,0.14)}
     #audioPlayer{position:fixed;left:12px;right:12px;bottom:12px;background:rgba(255,255,255,0.96);padding:10px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.12);display:none;align-items:center;gap:12px;z-index:1500}
-    #audioPlayer .info{flex:1}
-    #audioPlayer button{background:none;border:none;font-weight:700;cursor:pointer;font-size:16px}
     .equalizer{display:flex;align-items:flex-end;gap:3px}
     .equalizer span{width:4px;height:8px;background:var(--accent);animation:beat .9s infinite ease-in-out}
     @keyframes beat{0%{height:6px}50%{height:20px}100%{height:6px}}
-
-    /* toast */
     .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:8px;z-index:2200;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
-
-    /* install button */
     .install-btn{position:fixed;right:18px;bottom:90px;background:var(--gold2);color:#fff;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(212,160,23,0.18);z-index:2200}
-
-    /* responsive */
-    @media (max-width:600px){
-      .hero{flex-direction:column;align-items:flex-start}
-      #audioPlayer{left:8px;right:8px;padding:8px}
-    }
+    /* FULLSCREEN ALLOW POPUP (force) */
+    #warningPopup{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:4000;background-size:cover;background-position:center}
+    /* devotional warning screen (shown when user presses Not Now) */
+    #devotionalBlock{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:4100;background-size:cover;background-position:center}
+    /* small helpers */
+    @media (max-width:600px){ .hero{flex-direction:column;align-items:flex-start} #audioPlayer{left:8px;right:8px;padding:8px} }
   </style>
 </head>
 <body>
@@ -89,6 +48,30 @@
     🌞 जय छठी मईया 🌞
     <div class="subtitle">Chhath Bhajans — Offline | Installable App</div>
   </header>
+
+  <!-- FULL-SCREEN ALLOW POPUP (force) -->
+  <div id="warningPopup" style="background:linear-gradient(135deg,rgba(212,160,23,0.95),rgba(255,123,0,0.94)),url('https://i.ibb.co/R0q7v0y/chhath-ghat-bg.jpg');background-blend-mode:overlay;">
+    <div style="background:#fff;padding:22px;border-radius:16px;max-width:460px;width:90%;box-shadow:0 18px 60px rgba(0,0,0,0.45);text-align:center;">
+      <h2 style="margin:0 0 10px;color:#d48806;font-weight:800;">📥 First Time Setup</h2>
+      <p style="color:#444;font-size:15px;line-height:1.5;">
+        पहली बार उपयोग के लिए यह साइट लगभग <b>67MB</b> डाउनलोड करेगी। सिर्फ <b>एक बार</b> डाउनलोड करने के बाद आप <b>लाइफटाइम के लिए ऑफलाइन</b> भजन सुन सकेंगे।
+      </p>
+      <p style="font-weight:bold;color:#d48806;">क्या आप Allow करना चाहते हैं?</p>
+      <button id="allowBtn" style="background:#d4a017;color:white;border:none;padding:12px 18px;font-size:16px;border-radius:10px;margin:8px 0;cursor:pointer;box-shadow:0 6px 18px rgba(212,160,23,0.35);width:100%;">✅ Allow & Download</button>
+      <button id="notNowBtn" style="background:#555;color:white;border:none;padding:10px 18px;font-size:15px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;">Not Now</button>
+    </div>
+  </div>
+
+  <!-- DEVOTIONAL BLOCK shown if user presses Not Now (force allow flow) -->
+  <div id="devotionalBlock" style="background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.6)),url('https://i.ibb.co/R0q7v0y/chhath-ghat-bg.jpg');background-blend-mode:overlay;">
+    <div style="background:rgba(255,255,255,0.96);padding:26px;border-radius:14px;max-width:520px;width:94%;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,0.45);">
+      <h2 style="margin:0 0 8px;color:#a66108;font-weight:900;">🙏 कृपया Allow करके आगे बढ़ें</h2>
+      <p style="color:#3b2502;font-size:15px;line-height:1.6;">
+        बिना Allow किये यह सेवा उपलब्ध नहीं होगी। कृपया "Allow & Download" करके साइट का पूरा अनुभव प्राप्त करें।
+      </p>
+      <button id="allowNowFromDevotional" style="background:#d4a017;color:white;border:none;padding:12px 18px;font-size:16px;border-radius:10px;margin-top:10px;cursor:pointer;box-shadow:0 6px 18px rgba(212,160,23,0.35);">🔓 Allow Now</button>
+    </div>
+  </div>
 
   <div class="container">
     <div class="hero">
@@ -144,12 +127,12 @@
     </div>
   </div>
 
-  <!-- hidden bell (will play on user allow) -->
-  <audio id="bell" src="/Chatth-Site/bell.mp3" preload="auto"></audio>
+  <!-- dholak sound (plays on Allow) — you must add file at /Chatth-Site/dholak.mp3 -->
+  <audio id="dholak" src="/Chatth-Site/dholak.mp3" preload="auto"></audio>
 
   <script>
-  /***************** CONFIG *****************/
-  const BASE = '/Chatth-Site'; // IMPORTANT: your GitHub Pages repo folder
+  /* ================= CONFIG ================= */
+  const BASE = '/Chatth-Site';
   const CACHE_NAME = 'chhath-songs-v2';
   const songs = [
     'CHHATHI MAAI AAILI NAIHARVA.mp3',
@@ -165,126 +148,109 @@
     'महिमा छठी मइया के अपार.mp3',
     'हे छठी मइया.mp3'
   ];
-  window.songs = songs; // expose globally
+  window.songs = songs;
 
-  /***************** UI references *****************/
-  const songListEl = document.getElementById('songList');
+  /* ================ UI Refs ================= */
+  const warningPopup = document.getElementById('warningPopup');
+  const notNowBtn = document.getElementById('notNowBtn');
+  const allowBtn = document.getElementById('allowBtn');
+  const devotionalBlock = document.getElementById('devotionalBlock');
+  const allowNowFromDevotional = document.getElementById('allowNowFromDevotional');
   const downloadEl = document.getElementById('downloadProgress');
   const barEl = downloadEl.querySelector('.bar');
   const pctEl = downloadEl.querySelector('.percent');
+  const songListEl = document.getElementById('songList');
   const audioPlayer = document.getElementById('audioPlayer');
   const player = document.getElementById('player') || document.createElement('audio');
   const currentSongEl = document.getElementById('currentSong');
   const currentMetaEl = document.getElementById('currentMeta');
   const eqEl = document.getElementById('eq');
-  const bell = document.getElementById('bell');
+  const dholak = document.getElementById('dholak');
 
   let currentIndex = 0;
-  let isPlaying = false;
   let audioObjUrl = null;
 
-  /***************** Render song cards *****************/
-  function renderSongs() {
+  /* ============ Render Songs ============ */
+  function renderSongs(){
     songListEl.innerHTML = '';
-    songs.forEach((s, i) => {
+    songs.forEach((s,i)=>{
       const li = document.createElement('li');
       li.className = 'song-card';
-      const left = document.createElement('div');
-      left.className = 'song-meta';
-      const title = document.createElement('div');
-      title.className = 'song-title';
-      title.textContent = s.replace('.mp3','');
-      const sub = document.createElement('div');
-      sub.className = 'song-sub';
-      sub.textContent = 'Duration: --:--';
+      const left = document.createElement('div'); left.className='song-meta';
+      const title = document.createElement('div'); title.className='song-title'; title.textContent = s.replace('.mp3','');
+      const sub = document.createElement('div'); sub.className='song-sub'; sub.textContent='Duration: --:--';
       left.appendChild(title); left.appendChild(sub);
 
-      const right = document.createElement('div');
-      right.style.display='flex'; right.style.alignItems='center'; right.style.gap='12px';
+      const right = document.createElement('div'); right.style.display='flex'; right.style.alignItems='center'; right.style.gap='12px';
       const eq = document.createElement('div'); eq.className='equalizer'; eq.style.display='none';
       for(let k=0;k<5;k++){ const sp=document.createElement('span'); eq.appendChild(sp); }
       const btn = document.createElement('button'); btn.className='play-btn'; btn.innerText='▶ Play';
-      btn.onclick = (ev) => { ev.stopPropagation(); playSong(i); highlight(i); };
-
-      li.onclick = () => { playSong(i); highlight(i); };
+      btn.onclick = (ev)=>{ ev.stopPropagation(); playSong(i); highlight(i); };
+      li.onclick = ()=>{ playSong(i); highlight(i); };
 
       right.appendChild(eq); right.appendChild(btn);
       li.appendChild(left); li.appendChild(right);
       songListEl.appendChild(li);
     });
-    // attempt to fill durations from cache/network in background
-    setTimeout(loadDurations, 400);
+    setTimeout(loadDurations,400);
   }
 
   function highlight(index){
-    // show eq on playing card only
     const cards = document.querySelectorAll('.song-card');
-    cards.forEach((c, idx) => {
+    cards.forEach((c,idx)=>{
       const eq = c.querySelector('.equalizer');
-      if(idx === index){ eq.style.display='flex'; c.style.border='1px solid rgba(212,160,23,0.15)'; }
+      if(idx===index){ eq.style.display='flex'; c.style.border='1px solid rgba(212,160,23,0.15)'; }
       else { eq.style.display='none'; c.style.border='none'; }
     });
   }
 
-  /***************** Auto-download (robust) *****************/
+  /* ============ Auto Download ============ */
   async function autoDownloadSongs(){
     try{
       downloadEl.style.display='block';
       const cache = await caches.open(CACHE_NAME);
-      let downloaded = 0;
+      let done = 0;
       for(let i=0;i<songs.length;i++){
         const name = songs[i];
         const url = `${BASE}/${encodeURI(name)}`;
         try{
-          // skip if already cached
           const m = await cache.match(url);
-          if(m){ downloaded++; updateProgress(downloaded); continue; }
+          if(m){ done++; updateProgress(done); continue; }
           const resp = await fetch(url, {cache:'no-cache'});
-          if(!resp.ok) throw new Error('fetch failed');
+          if(!resp.ok) throw new Error('fetch failed ' + resp.status);
           await cache.put(url, resp.clone());
-          downloaded++;
-          updateProgress(downloaded);
+          done++; updateProgress(done);
         }catch(err){
-          console.warn('cache failed for', url, err);
-          // still update progress as attempted
-          downloaded++;
-          updateProgress(downloaded);
+          console.warn('cache failed', url, err);
+          // still count as attempted so progress doesn't hang
+          done++; updateProgress(done);
         }
       }
-      // done
-      setTimeout(()=>{ downloadEl.style.display='none'; waitForAllSongsCached(); }, 700);
+      setTimeout(()=>{ downloadEl.style.display='none'; waitForAllSongsCached(); },700);
     }catch(e){
       console.warn('autoDownloadSongs error', e);
       downloadEl.style.display='none';
     }
   }
 
-  function updateProgress(done){
-    const p = Math.round((done / songs.length) * 100);
-    barEl.style.width = p + '%';
-    pctEl.innerText = p + '%';
-  }
+  function updateProgress(done){ const p=Math.round((done/songs.length)*100); barEl.style.width=p+'%'; pctEl.innerText=p+'%'; }
 
-  /***************** Wait for complete and toast *****************/
+  /* ============ Check / Toast ============ */
   async function waitForAllSongsCached(){
     try{
       const cache = await caches.open(CACHE_NAME);
-      let ok = true;
+      let ok=true;
       for(const name of songs){
         const url = `${BASE}/${encodeURI(name)}`;
         const m = await cache.match(url);
-        if(!m){ ok = false; break; }
+        if(!m){ ok=false; break; }
       }
       if(ok) showToast('🎉 Download Complete – अब बिना इंटरनेट के भजन सुनें!');
     }catch(e){ console.warn(e); }
   }
+  function showToast(msg){ const t=document.createElement('div'); t.className='toast'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),4200); }
 
-  function showToast(msg){
-    const t = document.createElement('div'); t.className='toast'; t.innerText=msg;
-    document.body.appendChild(t); setTimeout(()=>t.remove(),4200);
-  }
-
-  /***************** Play logic using cache first *****************/
+  /* ============ Play (cache-first) ============ */
   async function playSong(index){
     currentIndex = index;
     const name = songs[index];
@@ -294,11 +260,10 @@
       const match = await cache.match(url);
       if(match){
         const blob = await match.blob();
-        if(audioObjUrl){ URL.revokeObjectURL(audioObjUrl); audioObjUrl = null; }
+        if(audioObjUrl) URL.revokeObjectURL(audioObjUrl);
         audioObjUrl = URL.createObjectURL(blob);
         loadAndPlay(audioObjUrl, name);
       } else {
-        // fallback to network stream
         loadAndPlay(url, name);
       }
     }catch(e){
@@ -308,10 +273,9 @@
   }
 
   function loadAndPlay(src, name){
-    if(player.parentNode === null) document.body.appendChild(player); // ensure exists
+    if(player.parentNode === null) document.body.appendChild(player);
     player.src = src;
-    player.play().catch(err => console.warn('play blocked', err));
-    isPlaying = true;
+    player.play().catch(err=>console.warn('play blocked', err));
     audioPlayer.style.display='flex';
     currentSongEl.innerText = name.replace('.mp3','');
     currentMetaEl.innerText = 'Offline ready';
@@ -319,23 +283,16 @@
     highlight(currentIndex);
   }
 
-  function togglePlay(){
-    if(!player.src) return playSong(currentIndex);
-    if(player.paused){ player.play(); isPlaying=true; document.getElementById('playPauseBtn').innerText='⏯️'; }
-    else { player.pause(); isPlaying=false; document.getElementById('playPauseBtn').innerText='⏯️'; }
-  }
+  function togglePlay(){ if(!player.src) return playSong(currentIndex); if(player.paused){ player.play(); } else { player.pause(); } }
+  function nextSong(){ currentIndex = (currentIndex+1)%songs.length; playSong(currentIndex); }
+  function prevSong(){ currentIndex = (currentIndex-1 + songs.length)%songs.length; playSong(currentIndex); }
+  player.addEventListener('ended', ()=> nextSong() );
 
-  function nextSong(){ currentIndex = (currentIndex + 1) % songs.length; playSong(currentIndex); }
-  function prevSong(){ currentIndex = (currentIndex - 1 + songs.length) % songs.length; playSong(currentIndex); }
-
-  // when audio ends, auto next
-  player.addEventListener('ended', () => { nextSong(); });
-
-  /***************** load durations (background) *****************/
+  /* ============ Durations loader ============ */
   async function loadDurations(){
-    const cardEls = document.querySelectorAll('.song-card');
+    const cards = document.querySelectorAll('.song-card');
     for(let i=0;i<songs.length;i++){
-      const el = cardEls[i];
+      const el = cards[i];
       if(!el) continue;
       const durEl = el.querySelector('.song-sub');
       const url = `${BASE}/${encodeURI(songs[i])}`;
@@ -344,11 +301,9 @@
         const match = await cache.match(url);
         let blobUrl = null;
         if(match){ const b = await match.blob(); blobUrl = URL.createObjectURL(b); }
-        else {
-          const resp = await fetch(url); if(resp.ok){ const b=await resp.blob(); blobUrl = URL.createObjectURL(b); }
-        }
+        else { const resp = await fetch(url); if(resp.ok){ const b = await resp.blob(); blobUrl = URL.createObjectURL(b); } }
         if(blobUrl){
-          await new Promise(res => {
+          await new Promise(res=>{
             const a = document.createElement('audio');
             a.src = blobUrl;
             a.addEventListener('loadedmetadata', ()=>{ durEl.innerText = 'Duration: ' + formatTime(a.duration); URL.revokeObjectURL(blobUrl); res(); });
@@ -358,28 +313,15 @@
       }catch(e){ console.warn('duration load', e); }
     }
   }
+  function formatTime(t){ if(!t || isNaN(t)) return '--:--'; const m=Math.floor(t/60); const s=Math.floor(t%60); return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s); }
 
-  function formatTime(t){ if(!t || isNaN(t)) return '--:--'; const m=Math.floor(t/60), s=Math.floor(t%60); return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s); }
-
-  /***************** UI helpers *****************/
-  function openSongs(){ document.getElementById('mainCards')?.remove(); renderSongs(); scrollToList(); }
-  function scrollToList(){ setTimeout(()=>{ document.getElementById('songList').scrollIntoView({behavior:'smooth'}); },120); }
-
-  /***************** Install prompt handling *****************/
+  /* ============ Install prompt ============ */
   let deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallButton();
-  });
-
+  window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; showInstallButton(); });
   function showInstallButton(){
     if(document.getElementById('installBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'installBtn';
-    btn.className = 'install-btn';
-    btn.innerText = 'Install App';
-    btn.onclick = async () => {
+    const btn = document.createElement('button'); btn.id='installBtn'; btn.className='install-btn'; btn.innerText='Install App';
+    btn.onclick = async ()=>{
       if(!deferredPrompt) return;
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
@@ -389,59 +331,59 @@
     document.body.appendChild(btn);
   }
 
-  /***************** Service Worker register (GitHub Pages path) *****************/
+  /* ============ Service Worker registration ============ */
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register(`${BASE}/service-worker.js`).then(reg=>{
-      console.log('SW registered', reg);
-    }).catch(e=>console.warn('SW register failed', e));
+    navigator.serviceWorker.register(`${BASE}/service-worker.js`).then(reg=>{ console.log('SW registered', reg); }).catch(e=>console.warn('SW register failed', e));
   }
 
-  /***************** Allow/Deny popup logic (plays bell when allowed) *****************/
-  function allowSite(){
-    // play a short bell as user gesture
-    try{ bell.play().catch(()=>{}); }catch(e){}
-    document.getElementById('warningPopup').style.display='none';
-    document.querySelector('.hero')?.scrollIntoView();
-    // start caching in background
-    setTimeout(()=>autoDownloadSongs(),300);
+  /* ============ ALLOW / DENY behavior (force) ============ */
+  allowBtn.addEventListener('click', async ()=>{
+    // user gesture — play dholak + start caching + hide popup
+    try{ await dholak.play().catch(()=>{}); }catch(e){}
+    warningPopup.style.display='none';
+    // start auto caching
+    setTimeout(()=>{ autoDownloadSongs(); }, 300);
+    // show song cards and UI
     renderSongs();
-  }
-  function denySite(){
-    // just close popup and show content (user asked), but don't start download
-    document.getElementById('warningPopup').style.display='none';
-    renderSongs();
-  }
-
-  /***************** initial UI: main card + popup element *****************/
-  // If user hasn't clicked Start, show mainCards area (create if missing)
-  (function ensureMainCards(){
-    if(document.getElementById('mainCards')) return;
-    const cards = document.createElement('div'); cards.id='mainCards';
-    cards.style.padding='18px';
-    cards.innerHTML = `<div style="max-width:980px;margin:14px auto;display:flex;gap:12px;flex-direction:column">
-      <div class="gold-card" onclick="openSongs()">🎵 Chhath Bhajans — Open</div>
-      <div class="gold-card">📜 Chhath Story — Coming</div>
-    </div>`;
-    document.querySelector('.container')?.prepend(cards);
-  })();
-
-  // Warning popup (first-time) - it's already visible in original markup: keep it shown by default
-  // if you want to hide it on return visitors, check localStorage flag here.
-
-  // small helper: check cached list (for debug)
-  async function listCached(){
-    try{
-      const cache = await caches.open(CACHE_NAME);
-      const keys = await cache.keys();
-      return keys.map(k=>k.url);
-    }catch(e){return [];}
-  }
-
-  // Run initial setup
-  window.addEventListener('load', ()=>{
-    // Render placeholder hero cards (already done). Register play events etc.
-    // If SW is ready and previously cached, show toast
+    // try to show install button/manifest
     setTimeout(()=>{ waitForAllSongsCached(); }, 2000);
+  });
+
+  // Not Now -> show devotional block (force path) with no escape; only Allow Now returns
+  notNowBtn.addEventListener('click', ()=>{
+    warningPopup.style.display='none';
+    devotionalBlock.style.display='flex';
+  });
+  allowNowFromDevotional.addEventListener('click', ()=>{
+    // same as allowBtn
+    try{ dholak.play().catch(()=>{}); }catch(e){}
+    devotionalBlock.style.display='none';
+    warningPopup.style.display='none';
+    setTimeout(()=>{ autoDownloadSongs(); },300);
+    renderSongs();
+    setTimeout(()=>{ waitForAllSongsCached(); },2000);
+  });
+
+  /* prevent back/escape to bypass: try to keep showing devotional block if user tries to navigate back.
+     Note: browser controls can't be fully disabled, but this reduces accidental navigation workaround. */
+  history.pushState({forced:'allow'}, '', location.href);
+  window.addEventListener('popstate', (ev)=>{
+    // if user tries back, keep them on devotional block
+    devotionalBlock.style.display = 'flex';
+    warningPopup.style.display = 'none';
+    history.pushState({forced:'allow'}, '', location.href);
+  });
+
+  /* Helper: openSongs button */
+  function openSongs(){ warningPopup.style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); }
+
+  /* small debug util */
+  async function listCached(){ try{ const cache = await caches.open(CACHE_NAME); const keys = await cache.keys(); return keys.map(k=>k.url); }catch(e){return [];} }
+
+  /* initial setup on load */
+  window.addEventListener('load', ()=>{
+    // show warning popup on first load (already present)
+    // if you want to hide popup for returning users, set & check a localStorage flag here
   });
   </script>
 </body>
