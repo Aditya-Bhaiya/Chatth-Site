@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff7b00">
     <title>Chhath Puja | Offline Bhajans</title>
     <style>
         body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:linear-gradient(180deg,#ffd9a0,#ffb870,#ff9a40); }
@@ -42,6 +44,58 @@ function renderSongs(){const list=document.getElementById('songList');songs.forE
 async function autoDownloadSongs(){const dp=document.getElementById('downloadProgress');dp.style.display='block';const cache=await caches.open(CACHE_NAME);for(let i=0;i<songs.length;i++){await cache.add(songs[i]);let p=Math.round(((i+1)/songs.length)*100);dp.querySelector('.bar').style.width=p+'%';dp.querySelector('.percent').innerText=p+'%';}dp.style.display='none';}
 function playSong(i){currentIndex=i;player.src=songs[currentIndex];player.play();document.getElementById('audioPlayer').style.display='block';document.getElementById('currentSong').innerText=songs[currentIndex];}
 function nextSong(){currentIndex=(currentIndex+1)%songs.length;playSong(currentIndex);}function prevSong(){currentIndex=(currentIndex-1+songs.length)%songs.length;playSong(currentIndex);}
+</script>
+<script>
+// register SW
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(reg => console.log('SW registered', reg))
+    .catch(err => console.warn('SW register failed', err));
+}
+
+// show install prompt (optional)
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // show your own install button / toast
+  const btn = document.createElement('button');
+  btn.innerText = 'Install App';
+  btn.style = 'position:fixed;right:16px;bottom:80px;padding:10px 14px;border-radius:8px;background:#ff7b00;color:#fff;border:none;z-index:1200;';
+  btn.onclick = async () => {
+    btn.remove();
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log('User choice', outcome);
+    deferredPrompt = null;
+  };
+  document.body.appendChild(btn);
+});
+
+// show download-complete toast
+function showToast(message) {
+  const t = document.createElement('div');
+  t.innerText = message;
+  t.style = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.5);z-index:1200;';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),4500);
+}
+
+// helper: check cache and show message when all songs cached
+async function waitForAllSongsCached(songs) {
+  try {
+    const cache = await caches.open('chhath-songs-v1');
+    let all = true;
+    for (const s of songs) {
+      const m = await cache.match(s);
+      if (!m) { all = false; break; }
+    }
+    if (all) showToast('🎉 Download Complete – अब बिना इंटरनेट के भजन सुनें!');
+  } catch(e){ console.warn(e); }
+}
+
+// call this after starting auto download (from your autoDownloadSongs)
+setTimeout(()=>{ if (window.songs) waitForAllSongsCached(window.songs); }, 2000);
 </script>
 </body>
 </html>
