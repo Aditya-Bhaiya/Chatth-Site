@@ -1,101 +1,448 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#ff7b00">
-    <title>Chhath Puja | Offline Bhajans</title>
-    <style>
-        body { font-family: 'Poppins', sans-serif; margin:0; padding:0; background:linear-gradient(180deg,#ffd9a0,#ffb870,#ff9a40); }
-        .warning-popup { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(45deg,#ff9900,#ff5e00); display:flex; justify-content:center; align-items:center; color:#fff; z-index:1000; animation:fadeIn 1s; }
-        .warning-box { background:#fff; color:#222; padding:25px; border-radius:15px; width:90%; max-width:450px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); animation:pop 0.6s; }
-        button { box-shadow:0 0 12px rgba(255,94,0,0.6); transition:0.3s; padding:12px 25px; margin:10px; border:none; border-radius:30px; cursor:pointer; font-weight:bold; font-size:16px; }
-        .allow-btn { background:#ff5e00; color:#fff; }
-        .deny-btn { background:#333; color:#fff; }
-        .cards { display:none; padding:20px; text-align:center; }
-        .card { background:#fff; padding:20px; margin:10px auto; width:80%; border-radius:15px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.2); transition:0.3s; font-size:18px; font-weight:bold; }
-        .card:hover { transform:scale(1.05); background:#ffecd1; }
-        #downloadProgress { display:none; background:#fff; padding:10px; margin:15px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
-        #downloadProgress .bar { height:10px; background:#ff5e00; border-radius:10px; width:0%; transition:0.3s; }
-        #downloadProgress .percent { font-weight:bold; color:#ff5e00; }
-        #songList li { list-style:none; }
-        @keyframes pop { 0%{transform:scale(0.5);} 100%{transform:scale(1);} }
-        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-        @keyframes beat {0%{height:6px}50%{height:22px}100%{height:6px}}
-        .equalizer { display:flex;align-items:flex-end;gap:3px;margin-left:10px; }
-        .equalizer span { width:4px;height:8px;background:#ff5e00;animation:beat 0.8s infinite ease-in-out; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jai Chhathi Maiya — Chhath Bhajans (Offline)</title>
+
+  <!-- PWA manifest + theme -->
+  <link rel="manifest" href="/Chatth-Site/manifest.json" />
+  <meta name="theme-color" content="#d4a017" />
+
+  <style>
+    /* Premium Golden + Chhath Ghat Vibe */
+    :root{
+      --gold1:#f7d774;
+      --gold2:#d4a017;
+      --accent:#ff7b00;
+      --text:#2b1700;
+      --card-bg:linear-gradient(180deg,#14110e,#0b0b0b);
+    }
+    html,body{height:100%;margin:0;font-family:Inter, Poppins, system-ui, sans-serif;background:linear-gradient(180deg,#fff7ea,#ffe5b8 30%,#ffd08a);color:var(--text);}
+    header{
+      background:linear-gradient(90deg,var(--gold2),#ffb84d);
+      color:#fff;padding:20px;text-align:center;font-size:28px;font-weight:800;
+      box-shadow:0 6px 22px rgba(0,0,0,0.18);
+      letter-spacing:1px;
+    }
+    .subtitle{font-size:14px;color:rgba(255,255,255,0.95);margin-top:6px}
+
+    .container{max-width:1050px;margin:18px auto;padding:12px;}
+    .hero{
+      display:flex;gap:16px;align-items:center;justify-content:space-between;
+      background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(255,250,230,0.9));
+      padding:18px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.06);
+    }
+    .hero-left{display:flex;gap:12px;align-items:center}
+    .badge{background:var(--gold1);color:var(--text);padding:8px 12px;border-radius:12px;font-weight:700;box-shadow:0 6px 18px rgba(212,160,23,0.12)}
+    .hero-title{font-size:20px;font-weight:800}
+    .cta{background:var(--accent);color:white;padding:10px 16px;border-radius:12px;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(255,123,0,0.18)}
+
+    /* Warning popup - full screen */
+    .warning-popup{position:fixed;inset:0;background:linear-gradient(135deg,rgba(212,160,23,0.95),rgba(255,123,0,0.94));display:flex;align-items:center;justify-content:center;z-index:2000}
+    .warning-box{background:#fff;padding:22px;border-radius:14px;max-width:460px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,0.35)}
+    .warning-box p{color:#222;margin:8px 0}
+
+    /* Song list */
+    #songList{margin:16px 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+    .song-card{
+      background:linear-gradient(180deg,#111,#060606);
+      color:#eaeaea;padding:14px;border-radius:12px;box-shadow:0 6px 26px rgba(0,0,0,0.5);display:flex;justify-content:space-between;align-items:center;gap:12px;
+      transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+    }
+    .song-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 22px 48px rgba(212,160,23,0.12)}
+    .song-meta{display:flex;flex-direction:column}
+    .song-title{font-weight:700;color:#fff;font-size:15px}
+    .song-sub{color:#b6b6b6;font-size:13px;margin-top:6px}
+    .play-btn{
+      background:var(--accent);border:none;padding:10px 14px;border-radius:28px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 10px 26px rgba(255,123,0,0.14)
+    }
+
+    /* download progress */
+    #downloadProgress{display:none;margin:12px 0;background:rgba(255,255,255,0.95);padding:10px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.08)}
+    .barWrap{background:#eee;border-radius:10px;padding:6px}
+    .bar{height:10px;width:0%;background:var(--accent);border-radius:10px;transition:width .25s}
+
+    /* audio player sticky bottom */
+    #audioPlayer{position:fixed;left:12px;right:12px;bottom:12px;background:rgba(255,255,255,0.96);padding:10px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.12);display:none;align-items:center;gap:12px;z-index:1500}
+    #audioPlayer .info{flex:1}
+    #audioPlayer button{background:none;border:none;font-weight:700;cursor:pointer;font-size:16px}
+    .equalizer{display:flex;align-items:flex-end;gap:3px}
+    .equalizer span{width:4px;height:8px;background:var(--accent);animation:beat .9s infinite ease-in-out}
+    @keyframes beat{0%{height:6px}50%{height:20px}100%{height:6px}}
+
+    /* toast */
+    .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:8px;z-index:2200;box-shadow:0 10px 30px rgba(0,0,0,0.4)}
+
+    /* install button */
+    .install-btn{position:fixed;right:18px;bottom:90px;background:var(--gold2);color:#fff;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(212,160,23,0.18);z-index:2200}
+
+    /* responsive */
+    @media (max-width:600px){
+      .hero{flex-direction:column;align-items:flex-start}
+      #audioPlayer{left:8px;right:8px;padding:8px}
+    }
+  </style>
 </head>
 <body>
-<header style="text-align:center;padding:15px;background:linear-gradient(45deg,#ff8a00,#ff5e00);color:white;font-size:26px;font-weight:bold;letter-spacing:1px;text-shadow:2px 2px 4px rgba(0,0,0,0.4);box-shadow:0 4px 12px rgba(0,0,0,0.3);">🌞 जय छठी मईया 🌞</header>
-<div class="warning-popup" id="warningPopup"><div class="warning-box"><p>अगर आप इस साइट पर पहली बार आ रहे हैं तो ध्यान दें: यह साइट पहली बार लोड होने पर लगभग <b>67MB डेटा</b> लेगी। लेकिन एक बार Allow करने के बाद आप <b>जीवनभर बिना इंटरनेट</b> के छठ भजन सुन सकते हैं।</p><p>क्या आप Allow करना चाहते हैं?</p><button class="allow-btn" onclick="allowSite()">Allow</button><button class="deny-btn" onclick="denySite()">Deny</button></div></div>
-<div class="cards" id="mainCards"><div class="card" onclick="openSongs()">🎵 Chhath Bhajans</div><div class="card">📜 Chhath Story</div></div>
-<div id="songsSection" style="display:none; padding:24px;"><h2 style="color:#fff; text-align:center;">Chhath Bhajans</h2><div id="downloadProgress"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div class="text">Preparing download...</div><div class="percent">0%</div></div><div style="background:#eee;padding:6px;border-radius:10px;"><div class="bar"></div></div></div><ul id="songList" style="padding:0; max-width:980px; margin:0 auto;"></ul><div id="comingSoon" style="max-width:980px;margin:16px auto;"><div class="song-card locked" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:#111;color:#9a9a9a;"><div><div style="font-weight:700;">More Bhajans Coming Soon</div><div style="font-size:13px;">Locked — Updates will be available soon</div></div><div>🔒</div></div></div></div>
-<div id="audioPlayer" style="display:none;position:fixed;bottom:0;left:0;width:100%;background:#ff7b00;color:white;padding:10px;box-shadow:0 -2px 10px rgba(0,0,0,0.4);"><div id="currentSong">No song playing</div><audio id="player" controls style="width:100%;"></audio><div style="display:flex;justify-content:center;margin-top:5px;gap:10px;"><button onclick="prevSong()">⏮️ Prev</button><button onclick="nextSong()">⏭️ Next</button></div></div>
-<script>
-let songs = ['CHHATHI MAAI AAILI NAIHARVA.mp3','Ho Deenanath.mp3','Pahile Pahil Chhathi Maiya.mp3','Uga Hai Suraj Dev.mp3','आदित मनाईला.mp3','काँच ही बाँस के बहंगिया.mp3','छठी माई के घाटवा पे आजन बाजन.mp3','नदिया के पनिया.mp3','पटना के घाट.mp3','पिया जोड़ा कोशी भरवाऐ के.mp3','महिमा छठी मैयय के अपार.mp3','हे छठी मइया.mp3'];
-const CACHE_NAME='chhath-songs-v1'; let currentIndex=0; let player=null;
-function allowSite(){document.getElementById('warningPopup').style.display='none';document.getElementById('mainCards').style.display='block';autoDownloadSongs();}
-function denySite(){document.getElementById('warningPopup').style.display='none';document.getElementById('mainCards').style.display='block';}
-function openSongs(){document.getElementById('mainCards').style.display='none';document.getElementById('songsSection').style.display='block';}
-window.onload=function(){player=document.getElementById('player');renderSongs();}
-function renderSongs(){const list=document.getElementById('songList');songs.forEach((s,i)=>{const li=document.createElement('li');li.style.background='#222';li.style.color='white';li.style.padding='12px';li.style.margin='8px 0';li.style.borderRadius='8px';li.innerHTML=`${s}<button onclick="playSong(${i})">▶</button>`;list.appendChild(li);});}
-async function autoDownloadSongs(){const dp=document.getElementById('downloadProgress');dp.style.display='block';const cache=await caches.open(CACHE_NAME);for(let i=0;i<songs.length;i++){await cache.add(songs[i]);let p=Math.round(((i+1)/songs.length)*100);dp.querySelector('.bar').style.width=p+'%';dp.querySelector('.percent').innerText=p+'%';}dp.style.display='none';}
-function playSong(i){currentIndex=i;player.src=songs[currentIndex];player.play();document.getElementById('audioPlayer').style.display='block';document.getElementById('currentSong').innerText=songs[currentIndex];}
-function nextSong(){currentIndex=(currentIndex+1)%songs.length;playSong(currentIndex);}function prevSong(){currentIndex=(currentIndex-1+songs.length)%songs.length;playSong(currentIndex);}
-</script>
-<script>
-// register SW
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(reg => console.log('SW registered', reg))
-    .catch(err => console.warn('SW register failed', err));
-}
+  <header>
+    🌞 जय छठी मईया 🌞
+    <div class="subtitle">Chhath Bhajans — Offline | Installable App</div>
+  </header>
 
-// show install prompt (optional)
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // show your own install button / toast
-  const btn = document.createElement('button');
-  btn.innerText = 'Install App';
-  btn.style = 'position:fixed;right:16px;bottom:80px;padding:10px 14px;border-radius:8px;background:#ff7b00;color:#fff;border:none;z-index:1200;';
-  btn.onclick = async () => {
-    btn.remove();
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log('User choice', outcome);
-    deferredPrompt = null;
-  };
-  document.body.appendChild(btn);
-});
+  <div class="container">
+    <div class="hero">
+      <div class="hero-left">
+        <div class="badge">Chhath Special</div>
+        <div style="margin-left:8px">
+          <div class="hero-title">भक्ति भजनों का संग्रह</div>
+          <div style="color:#553813;font-size:13px;margin-top:6px">एक बार डाउनलोड करें — lifetime offline सुनें</div>
+        </div>
+      </div>
+      <div>
+        <button class="cta" onclick="openSongs()">Start →</button>
+      </div>
+    </div>
 
-// show download-complete toast
-function showToast(message) {
-  const t = document.createElement('div');
-  t.innerText = message;
-  t.style = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.5);z-index:1200;';
-  document.body.appendChild(t);
-  setTimeout(()=>t.remove(),4500);
-}
+    <!-- download progress -->
+    <div id="downloadProgress">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div class="text">Downloading songs…</div>
+        <div class="percent">0%</div>
+      </div>
+      <div class="barWrap"><div class="bar"></div></div>
+    </div>
 
-// helper: check cache and show message when all songs cached
-async function waitForAllSongsCached(songs) {
-  try {
-    const cache = await caches.open('chhath-songs-v1');
-    let all = true;
-    for (const s of songs) {
-      const m = await cache.match(s);
-      if (!m) { all = false; break; }
+    <!-- songs list -->
+    <ul id="songList"></ul>
+
+    <!-- coming soon locked card -->
+    <div style="margin-top:14px;max-width:980px;margin-left:auto;margin-right:auto">
+      <div style="padding:14px;border-radius:12px;background:#0f0f0f;color:#cfcfcf;display:flex;justify-content:space-between;align-items:center;box-shadow:0 12px 30px rgba(0,0,0,0.45)">
+        <div>
+          <div style="font-weight:700">More Bhajans — Coming Soon</div>
+          <div style="font-size:13px;color:#999;margin-top:6px">Locked — updates will arrive here</div>
+        </div>
+        <div style="font-size:20px">🔒</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- audio player -->
+  <div id="audioPlayer">
+    <div class="info">
+      <div id="currentSong" style="font-weight:800;color:#2b1700">No song playing</div>
+      <div style="font-size:12px;color:#6b4a18" id="currentMeta">—</div>
+    </div>
+    <div class="equalizer" id="eq" style="display:none">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button onclick="prevSong()">⏮️</button>
+      <button onclick="togglePlay()" id="playPauseBtn">⏯️</button>
+      <button onclick="nextSong()">⏭️</button>
+    </div>
+  </div>
+
+  <!-- hidden bell (will play on user allow) -->
+  <audio id="bell" src="/Chatth-Site/bell.mp3" preload="auto"></audio>
+
+  <script>
+  /***************** CONFIG *****************/
+  const BASE = '/Chatth-Site'; // IMPORTANT: your GitHub Pages repo folder
+  const CACHE_NAME = 'chhath-songs-v2';
+  const songs = [
+    'CHHATHI MAAI AAILI NAIHARVA.mp3',
+    'Ho Deenanath.mp3',
+    'Pahile Pahil Chhathi Maiya.mp3',
+    'Uga Hai Suraj Dev.mp3',
+    'आदित मनाईला.mp3',
+    'काँच ही बाँस के बहंगिया.mp3',
+    'छठी माई के घाटवा पे आजन बाजन.mp3',
+    'नदिया के पनिया.mp3',
+    'पटना के घाट.mp3',
+    'पिया जोड़ा कोशी भरवाऐ के.mp3',
+    'महिमा छठी मइया के अपार.mp3',
+    'हे छठी मइया.mp3'
+  ];
+  window.songs = songs; // expose globally
+
+  /***************** UI references *****************/
+  const songListEl = document.getElementById('songList');
+  const downloadEl = document.getElementById('downloadProgress');
+  const barEl = downloadEl.querySelector('.bar');
+  const pctEl = downloadEl.querySelector('.percent');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const player = document.getElementById('player') || document.createElement('audio');
+  const currentSongEl = document.getElementById('currentSong');
+  const currentMetaEl = document.getElementById('currentMeta');
+  const eqEl = document.getElementById('eq');
+  const bell = document.getElementById('bell');
+
+  let currentIndex = 0;
+  let isPlaying = false;
+  let audioObjUrl = null;
+
+  /***************** Render song cards *****************/
+  function renderSongs() {
+    songListEl.innerHTML = '';
+    songs.forEach((s, i) => {
+      const li = document.createElement('li');
+      li.className = 'song-card';
+      const left = document.createElement('div');
+      left.className = 'song-meta';
+      const title = document.createElement('div');
+      title.className = 'song-title';
+      title.textContent = s.replace('.mp3','');
+      const sub = document.createElement('div');
+      sub.className = 'song-sub';
+      sub.textContent = 'Duration: --:--';
+      left.appendChild(title); left.appendChild(sub);
+
+      const right = document.createElement('div');
+      right.style.display='flex'; right.style.alignItems='center'; right.style.gap='12px';
+      const eq = document.createElement('div'); eq.className='equalizer'; eq.style.display='none';
+      for(let k=0;k<5;k++){ const sp=document.createElement('span'); eq.appendChild(sp); }
+      const btn = document.createElement('button'); btn.className='play-btn'; btn.innerText='▶ Play';
+      btn.onclick = (ev) => { ev.stopPropagation(); playSong(i); highlight(i); };
+
+      li.onclick = () => { playSong(i); highlight(i); };
+
+      right.appendChild(eq); right.appendChild(btn);
+      li.appendChild(left); li.appendChild(right);
+      songListEl.appendChild(li);
+    });
+    // attempt to fill durations from cache/network in background
+    setTimeout(loadDurations, 400);
+  }
+
+  function highlight(index){
+    // show eq on playing card only
+    const cards = document.querySelectorAll('.song-card');
+    cards.forEach((c, idx) => {
+      const eq = c.querySelector('.equalizer');
+      if(idx === index){ eq.style.display='flex'; c.style.border='1px solid rgba(212,160,23,0.15)'; }
+      else { eq.style.display='none'; c.style.border='none'; }
+    });
+  }
+
+  /***************** Auto-download (robust) *****************/
+  async function autoDownloadSongs(){
+    try{
+      downloadEl.style.display='block';
+      const cache = await caches.open(CACHE_NAME);
+      let downloaded = 0;
+      for(let i=0;i<songs.length;i++){
+        const name = songs[i];
+        const url = `${BASE}/${encodeURI(name)}`;
+        try{
+          // skip if already cached
+          const m = await cache.match(url);
+          if(m){ downloaded++; updateProgress(downloaded); continue; }
+          const resp = await fetch(url, {cache:'no-cache'});
+          if(!resp.ok) throw new Error('fetch failed');
+          await cache.put(url, resp.clone());
+          downloaded++;
+          updateProgress(downloaded);
+        }catch(err){
+          console.warn('cache failed for', url, err);
+          // still update progress as attempted
+          downloaded++;
+          updateProgress(downloaded);
+        }
+      }
+      // done
+      setTimeout(()=>{ downloadEl.style.display='none'; waitForAllSongsCached(); }, 700);
+    }catch(e){
+      console.warn('autoDownloadSongs error', e);
+      downloadEl.style.display='none';
     }
-    if (all) showToast('🎉 Download Complete – अब बिना इंटरनेट के भजन सुनें!');
-  } catch(e){ console.warn(e); }
-}
+  }
 
-// call this after starting auto download (from your autoDownloadSongs)
-setTimeout(()=>{ if (window.songs) waitForAllSongsCached(window.songs); }, 2000);
-</script>
+  function updateProgress(done){
+    const p = Math.round((done / songs.length) * 100);
+    barEl.style.width = p + '%';
+    pctEl.innerText = p + '%';
+  }
+
+  /***************** Wait for complete and toast *****************/
+  async function waitForAllSongsCached(){
+    try{
+      const cache = await caches.open(CACHE_NAME);
+      let ok = true;
+      for(const name of songs){
+        const url = `${BASE}/${encodeURI(name)}`;
+        const m = await cache.match(url);
+        if(!m){ ok = false; break; }
+      }
+      if(ok) showToast('🎉 Download Complete – अब बिना इंटरनेट के भजन सुनें!');
+    }catch(e){ console.warn(e); }
+  }
+
+  function showToast(msg){
+    const t = document.createElement('div'); t.className='toast'; t.innerText=msg;
+    document.body.appendChild(t); setTimeout(()=>t.remove(),4200);
+  }
+
+  /***************** Play logic using cache first *****************/
+  async function playSong(index){
+    currentIndex = index;
+    const name = songs[index];
+    const url = `${BASE}/${encodeURI(name)}`;
+    try{
+      const cache = await caches.open(CACHE_NAME);
+      const match = await cache.match(url);
+      if(match){
+        const blob = await match.blob();
+        if(audioObjUrl){ URL.revokeObjectURL(audioObjUrl); audioObjUrl = null; }
+        audioObjUrl = URL.createObjectURL(blob);
+        loadAndPlay(audioObjUrl, name);
+      } else {
+        // fallback to network stream
+        loadAndPlay(url, name);
+      }
+    }catch(e){
+      console.warn('play error', e);
+      loadAndPlay(url, name);
+    }
+  }
+
+  function loadAndPlay(src, name){
+    if(player.parentNode === null) document.body.appendChild(player); // ensure exists
+    player.src = src;
+    player.play().catch(err => console.warn('play blocked', err));
+    isPlaying = true;
+    audioPlayer.style.display='flex';
+    currentSongEl.innerText = name.replace('.mp3','');
+    currentMetaEl.innerText = 'Offline ready';
+    eqEl.style.display='flex';
+    highlight(currentIndex);
+  }
+
+  function togglePlay(){
+    if(!player.src) return playSong(currentIndex);
+    if(player.paused){ player.play(); isPlaying=true; document.getElementById('playPauseBtn').innerText='⏯️'; }
+    else { player.pause(); isPlaying=false; document.getElementById('playPauseBtn').innerText='⏯️'; }
+  }
+
+  function nextSong(){ currentIndex = (currentIndex + 1) % songs.length; playSong(currentIndex); }
+  function prevSong(){ currentIndex = (currentIndex - 1 + songs.length) % songs.length; playSong(currentIndex); }
+
+  // when audio ends, auto next
+  player.addEventListener('ended', () => { nextSong(); });
+
+  /***************** load durations (background) *****************/
+  async function loadDurations(){
+    const cardEls = document.querySelectorAll('.song-card');
+    for(let i=0;i<songs.length;i++){
+      const el = cardEls[i];
+      if(!el) continue;
+      const durEl = el.querySelector('.song-sub');
+      const url = `${BASE}/${encodeURI(songs[i])}`;
+      try{
+        const cache = await caches.open(CACHE_NAME);
+        const match = await cache.match(url);
+        let blobUrl = null;
+        if(match){ const b = await match.blob(); blobUrl = URL.createObjectURL(b); }
+        else {
+          const resp = await fetch(url); if(resp.ok){ const b=await resp.blob(); blobUrl = URL.createObjectURL(b); }
+        }
+        if(blobUrl){
+          await new Promise(res => {
+            const a = document.createElement('audio');
+            a.src = blobUrl;
+            a.addEventListener('loadedmetadata', ()=>{ durEl.innerText = 'Duration: ' + formatTime(a.duration); URL.revokeObjectURL(blobUrl); res(); });
+            a.addEventListener('error', ()=>{ res(); });
+          });
+        }
+      }catch(e){ console.warn('duration load', e); }
+    }
+  }
+
+  function formatTime(t){ if(!t || isNaN(t)) return '--:--'; const m=Math.floor(t/60), s=Math.floor(t%60); return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s); }
+
+  /***************** UI helpers *****************/
+  function openSongs(){ document.getElementById('mainCards')?.remove(); renderSongs(); scrollToList(); }
+  function scrollToList(){ setTimeout(()=>{ document.getElementById('songList').scrollIntoView({behavior:'smooth'}); },120); }
+
+  /***************** Install prompt handling *****************/
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+  });
+
+  function showInstallButton(){
+    if(document.getElementById('installBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'installBtn';
+    btn.className = 'install-btn';
+    btn.innerText = 'Install App';
+    btn.onclick = async () => {
+      if(!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      btn.remove();
+    };
+    document.body.appendChild(btn);
+  }
+
+  /***************** Service Worker register (GitHub Pages path) *****************/
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register(`${BASE}/service-worker.js`).then(reg=>{
+      console.log('SW registered', reg);
+    }).catch(e=>console.warn('SW register failed', e));
+  }
+
+  /***************** Allow/Deny popup logic (plays bell when allowed) *****************/
+  function allowSite(){
+    // play a short bell as user gesture
+    try{ bell.play().catch(()=>{}); }catch(e){}
+    document.getElementById('warningPopup').style.display='none';
+    document.querySelector('.hero')?.scrollIntoView();
+    // start caching in background
+    setTimeout(()=>autoDownloadSongs(),300);
+    renderSongs();
+  }
+  function denySite(){
+    // just close popup and show content (user asked), but don't start download
+    document.getElementById('warningPopup').style.display='none';
+    renderSongs();
+  }
+
+  /***************** initial UI: main card + popup element *****************/
+  // If user hasn't clicked Start, show mainCards area (create if missing)
+  (function ensureMainCards(){
+    if(document.getElementById('mainCards')) return;
+    const cards = document.createElement('div'); cards.id='mainCards';
+    cards.style.padding='18px';
+    cards.innerHTML = `<div style="max-width:980px;margin:14px auto;display:flex;gap:12px;flex-direction:column">
+      <div class="gold-card" onclick="openSongs()">🎵 Chhath Bhajans — Open</div>
+      <div class="gold-card">📜 Chhath Story — Coming</div>
+    </div>`;
+    document.querySelector('.container')?.prepend(cards);
+  })();
+
+  // Warning popup (first-time) - it's already visible in original markup: keep it shown by default
+  // if you want to hide it on return visitors, check localStorage flag here.
+
+  // small helper: check cached list (for debug)
+  async function listCached(){
+    try{
+      const cache = await caches.open(CACHE_NAME);
+      const keys = await cache.keys();
+      return keys.map(k=>k.url);
+    }catch(e){return [];}
+  }
+
+  // Run initial setup
+  window.addEventListener('load', ()=>{
+    // Render placeholder hero cards (already done). Register play events etc.
+    // If SW is ready and previously cached, show toast
+    setTimeout(()=>{ waitForAllSongsCached(); }, 2000);
+  });
+  </script>
 </body>
 </html>
